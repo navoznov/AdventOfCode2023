@@ -1,3 +1,5 @@
+using Common;
+
 namespace Day02;
 
 class GameParser
