@@ -13,18 +13,6 @@ var state = new State
     { Color.Blue, 14 },
 };
 
-foreach (var game in games)
-{
-    if (game.IsValidForCubes(state))
-    {
-        
-    }
-    else
-    {
-        
-    }
-}
-var validGames = games.Where(g => g.IsValidForCubes(state)).ToList();
-var part1result = validGames.Sum(g => g.Id);
+var part1result = games.Where(g => g.IsValidForCubes(state)).Sum(g => g.Id);
 Console.WriteLine(part1result);
 return;
