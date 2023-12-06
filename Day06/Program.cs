@@ -1,23 +1,29 @@
 ﻿using Day06;
 
 var text = File.ReadAllText("input.txt");
-var races = RacesParser.Parse(text);
-var winWayCounts = races.Select(GetWinWayCount).ToArray();
-var part1Result = winWayCounts.Aggregate(1, (a,b) => a*b);
-Console.WriteLine(part1Result);
 
+// Part 1
+Console.WriteLine(GetResult(text, new RacesParser()));
 
-int GetWinWayCount(Race race)
+// Part 2
+Console.WriteLine(GetResult(text, new RaceAdvancedParser()));
+
+long GetResult(string input, RacesParser racesParser)
 {
-    int winWayCounter = 0;
+    var races = racesParser.Parse(input);
+    var winWayCounts = races.Select(GetWinWayCount).ToArray();
+    return winWayCounts.Aggregate(1L, (a, b) => a * b);
+}
+
+long GetWinWayCount(Race race)
+{
+    var winWayCounter = 0;
     var raceTime = race.Time;
-    var raceDistance = race.Distance;
-    
-    for (int holdButtonTime = 1; holdButtonTime < raceTime; holdButtonTime++)
+    for (var holdButtonTime = 1; holdButtonTime < raceTime; holdButtonTime++)
     {
         var speed = holdButtonTime;
         var distance = speed * (raceTime - holdButtonTime);
-        if (distance> raceDistance)
+        if (distance > race.Distance)
         {
             winWayCounter++;
         }
@@ -26,5 +32,4 @@ int GetWinWayCount(Race race)
     return winWayCounter;
 }
 
-
-record Race(int Time, int Distance);
+record Race(long Time, long Distance);
