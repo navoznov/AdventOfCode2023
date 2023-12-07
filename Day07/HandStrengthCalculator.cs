@@ -1,8 +1,8 @@
 namespace Day07;
 
-public static class HandStrengthCalculator
+public class HandStrengthCalculator : IHandStrengthCalculator
 {
-    public static int GetHandStrength(IEnumerable<char> cards)
+    public int GetHandStrength(IEnumerable<char> cards)
     {
         var sameCardCounts = cards.GroupBy(c => c)
             .Select(g => g.Count())

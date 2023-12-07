@@ -1,24 +1,16 @@
 namespace Day07;
 
-public class HandCardsComparer : IComparer<char[]>
+public class HandCardsByRankComparer : IComparer<char[]>
 {
-    private static readonly Dictionary<char, int> CardRanks = new()
+    private readonly IHandStrengthCalculator _handStrengthCalculator;
+    private readonly Dictionary<char, int> CardRanks;
+
+    public HandCardsByRankComparer(IHandStrengthCalculator handStrengthCalculator)
     {
-        { '2', 2 },
-        { '3', 3 },
-        { '4', 4 },
-        { '5', 5 },
-        { '6', 6 },
-        { '7', 7 },
-        { '8', 8 },
-        { '9', 9 },
-        { 'T', 10 },
-        { 'J', 11 },
-        { 'Q', 12 },
-        { 'K', 13 },
-        { 'A', 14 },
-    };
-    
+        _handStrengthCalculator = handStrengthCalculator;
+        CardRanks = GetCardRanks();
+    }
+
     public int Compare(char[]? x, char[]? y)
     {
         if (x == null)
@@ -31,8 +23,8 @@ public class HandCardsComparer : IComparer<char[]>
             throw new ArgumentNullException(nameof(y));
         }
 
-        var xStrength = HandStrengthCalculator.GetHandStrength(x);
-        var yStrength = HandStrengthCalculator.GetHandStrength(y);
+        var xStrength = _handStrengthCalculator.GetHandStrength(x);
+        var yStrength = _handStrengthCalculator.GetHandStrength(y);
 
         if (xStrength < yStrength)
         {
@@ -47,13 +39,33 @@ public class HandCardsComparer : IComparer<char[]>
         return CompareCardValues(x, y);
     }
 
+    protected virtual Dictionary<char, int> GetCardRanks()
+    {
+        return new()
+        {
+            { '2', 2 },
+            { '3', 3 },
+            { '4', 4 },
+            { '5', 5 },
+            { '6', 6 },
+            { '7', 7 },
+            { '8', 8 },
+            { '9', 9 },
+            { 'T', 10 },
+            { 'J', 11 },
+            { 'Q', 12 },
+            { 'K', 13 },
+            { 'A', 14 },
+        };
+    }
+
     private int CompareCardValues(char[] xCards, char[] yCards)
     {
         if (xCards.Length != yCards.Length)
         {
             throw new ArgumentException($"{nameof(yCards)} count must be equal to ${nameof(xCards)} count.");
         }
-        
+
         for (var i = 0; i < xCards.Length; i++)
         {
             var xCard = xCards[i];
