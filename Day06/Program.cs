@@ -33,3 +33,4 @@ long GetWinWayCount(Race race)
 }
 
 record Race(long Time, long Distance);
+
