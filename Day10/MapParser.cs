@@ -16,17 +16,10 @@ class MapParser
         { 'F', Cell.SE },
     };
 
-    public static readonly Dictionary<Cell, char> ReversedCells = AllCells.ToDictionary(x => x.Value, x => x.Key); 
-
-    public static char GetCharByValue(Cell cell)
-    {
-        return ReversedCells[cell];
-    }
-
-        public (Map2d<Cell> map, Point startPoint) Parse(string[] lines)
+    public (Map2d<Cell> map, Point startPoint) Parse(string[] lines)
     {
         Point startPoint = default!;
-        var map = new Map2d<Cell>(lines[0].Length, lines.Length);
+        var map = new Map2d<Cell>(lines[0].Length, lines.Length, () => Cell.Empty);
         for (var y = 0; y < lines.Length; y++)
         {
             var line = lines[y];
