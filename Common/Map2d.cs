@@ -51,6 +51,17 @@ public class Map2d<T>
         set => _map[x - XMin, y - YMin] = value;
     }
 
+    public IEnumerable<ValuePoint<T>> GetAllItems()
+    {
+        for (var x = 0; x < XSize; x++)
+        {
+            for (var y = 0; y < YSize; y++)
+            {
+                yield return new ValuePoint<T>(_map[x, y], new Point(x, y));
+            }
+        }
+    }
+
     public bool Exists(Point point)
     {
         return Exists(point.X, point.Y);
@@ -112,11 +123,11 @@ public class Map2d<T>
 
             for (var x = xMin; x <= xMax; x++)
             {
-                if (!Exists(x,y))
+                if (!Exists(x, y))
                 {
                     continue;
                 }
-                
+
                 var cellValue = this[x, y];
                 var str = valuePrinter(cellValue);
                 stringBuilder.Append(str);

@@ -12,3 +12,5 @@ public record Point(int X, int Y)
         return new Vector(point1.X - point2.X, point1.Y - point2.Y);
     }
 }
+
+public record ValuePoint<T>(T Value, Point Point);
