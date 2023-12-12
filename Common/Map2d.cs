@@ -4,6 +4,8 @@ namespace Common;
 
 public class Map2d<T>
 {
+    public static readonly Vector[] AllVectors = { Vector.N, Vector.E, Vector.S, Vector.W, };
+
     public int XSize { get; init; }
     public int YSize { get; init; }
 
@@ -59,6 +61,21 @@ public class Map2d<T>
             {
                 yield return new ValuePoint<T>(_map[x, y], new Point(x, y));
             }
+        }
+    }
+
+    public IEnumerable<ValuePoint<T>> GetAllInRow(int y)
+    {
+        for (var x = 0; x < XSize; x++)
+        {
+            yield return new ValuePoint<T>(_map[x, y], new Point(x, y));
+        }
+    }
+    public IEnumerable<ValuePoint<T>> GetAllInColumn(int x)
+    {
+        for (var y = 0; y < YSize; y++)
+        {
+            yield return new ValuePoint<T>(_map[x, y], new Point(x, y));
         }
     }
 
