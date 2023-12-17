@@ -4,37 +4,56 @@ using Day16;
 var lines = File.ReadAllLines("input.txt");
 var map = MapParser.Parse(lines);
 
-Queue<Beam> beamsToDiscover = new();
-HashSet<Beam> visitedBeams = new HashSet<Beam>();
 
+// Part 1
 var startBeam = new Beam(new Point(0, 0), Vector.E);
-beamsToDiscover.Enqueue(startBeam);
+var energizedPointsCount = GetEnergizedPointsCount(startBeam, map);
+Console.WriteLine(energizedPointsCount);
 
-while (beamsToDiscover.TryDequeue(out Beam beam))
+// Part 2
+var sStartBeams = Enumerable.Range(0, map.XSize)
+    .Select(x => new Beam(new Point(x, 0), Vector.S));
+var nStartBeams = Enumerable.Range(0, map.XSize)
+    .Select(x => new Beam(new Point(x, map.YSize - 1), Vector.N));
+var eStartBeams = Enumerable.Range(0, map.YSize)
+    .Select(y => new Beam(new Point(0, y), Vector.E));
+var wStartBeams = Enumerable.Range(0, map.YSize)
+    .Select(y => new Beam(new Point(map.XSize - 1, y), Vector.W));
+var allStartBeams = Array.Empty<Beam>()
+    .Union(sStartBeams)
+    .Union(nStartBeams)
+    .Union(eStartBeams)
+    .Union(wStartBeams)
+    .ToArray();
+var maxCount = allStartBeams.Max(b => GetEnergizedPointsCount(b, map));
+Console.WriteLine(maxCount);
+
+int GetEnergizedPointsCount(Beam startBeam1, Map2d<Cell> map2d)
 {
-    if (visitedBeams.Contains(beam))
+    Queue<Beam> beamsToDiscover = new();
+    HashSet<Beam> visitedBeams = new HashSet<Beam>();
+
+    beamsToDiscover.Enqueue(startBeam1);
+
+    while (beamsToDiscover.TryDequeue(out Beam beam))
     {
-        continue;
+        if (visitedBeams.Contains(beam))
+        {
+            continue;
+        }
+
+        visitedBeams.Add(beam);
+
+        var cell = map2d[beam.Point];
+        var nextBeams = GetNextBeams(cell, beam)
+            .Where(b => map2d.Exists(b.Point));
+        foreach (var nextPoint in nextBeams)
+        {
+            beamsToDiscover.Enqueue(nextPoint);
+        }
     }
 
-    visitedBeams.Add(beam);
-
-    var cell = map[beam.Point];
-    var nextBeams = GetNextBeams(cell, beam)
-        .Where(b => map.Exists(b.Point));
-    foreach (var nextPoint in nextBeams)
-    {
-        beamsToDiscover.Enqueue(nextPoint);
-    }
-}
-
-var visitedPoints = visitedBeams.Select(b=>b.Point).Distinct().ToArray();
-Console.WriteLine(visitedPoints.Length);
-
-IEnumerable<Beam> GetNextBeams(Cell cell, Beam beam)
-{
-    var outcomeDirections = GetOutcomeDirections(cell, beam.IncomeDirection);
-    return outcomeDirections.Select(v => new Beam(beam.Point + v, v));
+    return visitedBeams.Select(b => b.Point).Distinct().Count();
 }
 
 Vector[] GetOutcomeDirections(Cell cell, Vector incomeDirection)
@@ -74,6 +93,12 @@ Vector[] GetOutcomeDirections(Cell cell, Vector incomeDirection)
         default:
             throw new ArgumentOutOfRangeException(nameof(incomeDirection));
     }
+}
+
+IEnumerable<Beam> GetNextBeams(Cell cell, Beam beam)
+{
+    var outcomeDirections = GetOutcomeDirections(cell, beam.IncomeDirection);
+    return outcomeDirections.Select(v => new Beam(beam.Point + v, v));
 }
 
 record Beam(Point Point, Vector IncomeDirection);
